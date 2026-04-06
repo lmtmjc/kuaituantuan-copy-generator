@@ -15,12 +15,19 @@
 - [x] UI/交互细化
 - [x] DeepSeek API 接入
 - [x] `.env` / `.env.example` / `.gitignore` 配置
+- [x] GitHub 远程仓库配置与首次备份推送
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
 - AI接口：DeepSeek API（OpenAI 兼容 SDK）
 - 数据：examples.json（快团团爆款文案案例，few-shot素材）
 - 配置：`.env` + `python-dotenv`
+
+## 版本管理状态
+- 本地仓库已完成 Git 初始化
+- 当前分支：`main`
+- 已配置远程：`origin -> https://github.com/lmtmjc/kuaituantuan-copy-generator.git`
+- 当前已建立 `main` 跟踪 `origin/main`
 
 ## 关键文件说明
 - `app.py` 主程序入口

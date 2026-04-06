@@ -15,3 +15,6 @@
 - 新建 `.gitignore` 并忽略 `.env`，避免本地密钥进入版本库
 - 前端移除 DeepSeek 服务状态展示，对客户仅保留通用可用性提示
 - 更新 README，补充 DeepSeek 配置方式、运行说明和当前交互能力
+- 配置 GitHub 远程仓库 `origin`
+- 首次将本地 `main` 分支推送到 `lmtmjc/kuaituantuan-copy-generator`
+- 建立本地 `main` 与 `origin/main` 的跟踪关系，便于后续备份
