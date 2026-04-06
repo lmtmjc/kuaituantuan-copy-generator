@@ -1,0 +1,4 @@
+streamlit>=1.50.0
+# DeepSeek is called through the OpenAI-compatible Python SDK
+openai>=2.30.0
+python-dotenv>=1.0.1
