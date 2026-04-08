@@ -1,5 +1,11 @@
 # 更新日志 CHANGELOG
 
+## 2026-04-08
+- `prompt.py` 的 few-shot 示例取用逻辑改为按品类动态匹配：优先二级品类，其次一级品类，最后兜底前两条
+- 修复 `examples.json` 的格式问题，保留全部案例内容，并确认文件可被 JSON 正常解析
+- `examples.json` 当前整理为 18 条案例，覆盖更多食品饮料子品类
+- 同步更新 `CONTEXT.md`，记录当前项目进度与示例数据状态
+
 ## 2026-04-06
 - 项目初始化
 - 创建 CONTEXT.md 和 CHANGELOG.md

@@ -59,8 +59,20 @@ def build_prompt(payload):
 
     examples = load_examples()
     if examples:
+        main_cat = payload.get("main_category", "")
+        sub_cat = payload.get("subcategory", "")
+
+        # 优先匹配同二级品类
+        matched = [e for e in examples if sub_cat and sub_cat in e.get("category", "")]
+        # 没有则匹配同一级品类
+        if not matched:
+            matched = [e for e in examples if main_cat and main_cat in e.get("category", "")]
+        # 兜底取前两条
+        if not matched:
+            matched = examples[:2]
+
         lines.extend(["", "参考示例："])
-        for example in examples[:2]:
+        for example in matched[:2]:
             lines.append(f"商品名：{example.get('product_name', '')}")
             lines.append(f"品类：{example.get('category', '')}")
             lines.append(f"口味/规格：{example.get('specs', '')}")

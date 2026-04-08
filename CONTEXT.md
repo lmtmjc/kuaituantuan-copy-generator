@@ -16,12 +16,15 @@
 - [x] DeepSeek API 接入
 - [x] `.env` / `.env.example` / `.gitignore` 配置
 - [x] GitHub 远程仓库配置与首次备份推送
+- [x] Prompt 示例按品类动态匹配
+- [x] examples.json 扩充并修复为 18 条可解析案例
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
 - AI接口：DeepSeek API（OpenAI 兼容 SDK）
 - 数据：examples.json（快团团爆款文案案例，few-shot素材）
 - 配置：`.env` + `python-dotenv`
+- Prompt策略：few-shot 示例按二级品类优先、一级品类兜底匹配
 
 ## 版本管理状态
 - 本地仓库已完成 Git 初始化
@@ -34,7 +37,7 @@
 - `catalog.py` 品类、标签、风格和模型配置
 - `generation.py` 表单校验、模型调用和结果封装
 - `prompt.py` 核心Prompt逻辑（重要，修改需谨慎）
-- `examples.json` 爆款案例数据
+- `examples.json` 爆款案例数据（当前 18 条，可正常 JSON 解析）
 - `.env.example` 环境变量模板
 - `.gitignore` 本地密钥忽略规则
 - `PRD.md` 产品需求文档（所有功能的最终依据）
@@ -53,8 +56,11 @@
 - 初始版本的 OpenAI SDK 调用方式与依赖版本不匹配，已升级为兼容 SDK 客户端写法
 - 前端暴露 API Key 输入和服务状态不适合客户使用，现已全部收口到服务端环境变量
 - `.env` 必须加入 `.gitignore`，避免真实密钥被 git 跟踪
+- few-shot 如果固定取前两条，容易与当前商品品类偏离，现已改为按品类动态匹配示例
+- `examples.json` 在合并大量案例时容易出现转义和结构错误，后续每次更新后都要先做 JSON 解析验证
 
 ## 下一步要做的事
 - 用真实 DeepSeek key 做一轮完整联调，继续收 Prompt 质量
 - 视需要补基础测试（Prompt 归一化、表单校验、输出解析）
+- 继续补充更多二级品类示例，提高动态匹配下的 few-shot 质量
 - 评估部署方式，确保客户打开页面即可直接使用
