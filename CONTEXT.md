@@ -19,13 +19,14 @@
 - [x] Prompt 示例按品类动态匹配
 - [x] examples.json 扩充并修复为 18 条可解析案例
 - [x] Prompt 强化为快团团资深运营专家人设与高转化语言风格
+- [x] Prompt 补充排版规范、价格划算感表达和描述结构约束
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
 - AI接口：DeepSeek API（OpenAI 兼容 SDK）
 - 数据：examples.json（快团团爆款文案案例，few-shot素材）
 - 配置：`.env` + `python-dotenv`
-- Prompt策略：few-shot 示例按二级品类优先、一级品类兜底匹配，并强化快团团食品饮料资深运营专家人设与带货语气
+- Prompt策略：few-shot 示例按二级品类优先、一级品类兜底匹配，并强化快团团食品饮料资深运营专家人设、排版规范、价格表达与带货语气
 
 ## 版本管理状态
 - 本地仓库已完成 Git 初始化

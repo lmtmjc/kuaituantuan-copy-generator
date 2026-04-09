@@ -32,6 +32,9 @@ def build_prompt(payload):
         "输出必须严格为 JSON，对象键名固定为：activity_title、product_title、selling_points、detailed_description、labels。",
         "字段要求：activity_title 为 1 条；product_title 为 1 条；selling_points 必须恰好 3 条；detailed_description 为 3 到 5 段；labels 为 3 到 5 个关键词。",
         "字数要求：activity_title 30 字以内；product_title 8 到 30 字；selling_points 每条 15 字以内；detailed_description 总字数 500 字以内。",
+        "排版规范：activity_title 必须以吸睛 Emoji 开头（如🔥、💰、☕️）；",
+        "selling_points 每一条必须以 ✅、✨ 或 📍 开头；",
+        "detailed_description 段落间必须有视觉呼吸感，适当使用符号分割。",
         "商品标题优先包含品牌、品名、规格；若输入中没有品牌，不得虚构品牌。",
         "不要使用绝对化词汇，例如：最健康、纯天然、第一。",
         "健康功能描述不得夸大；涉及减肥表达时改写为控卡，涉及排毒表达时改写为轻体。",
@@ -41,6 +44,8 @@ def build_prompt(payload):
         "语言风格要亲切、真诚、富有感染力，像团长在私域里真诚推荐好货，而不是公文通知或产品说明书。",
         "表达要突出购买理由、口感感受、使用场景和下单冲动，但前提是不虚构任何未提供的信息。",
         "详细描述要有自然段落感和带货节奏，少写生硬术语和纯参数罗列，多写用户能快速感知的卖点。",
+        "详细描述要遵循‘痛点/场景+解决方案+下单理由’的逻辑。",
+        "例如：不要只写‘茉莉咖啡液’，要写‘下午办公犯困来一支，3秒唤醒清爽茉莉香，比点奶茶划算多了’。",
         f"本次文案风格：{payload.get('style', '种草风')}。{STYLE_HINTS.get(payload.get('style', '种草风'), '')}",
         "",
         "产品信息：",
@@ -52,9 +57,12 @@ def build_prompt(payload):
     tags = payload.get("tags", [])
     if tags:
         lines.append(f"核心卖点标签：{', '.join(tags)}")
-    if payload.get("group_price"):
+    if payload.get("group_price") and payload.get("original_price"):
+        lines.append(f"团购价：{payload.get('group_price')}，原价：{payload.get('original_price')}。")
+        lines.append("请在文案中计算差价，强调‘立省XX元’或‘一杯不到4块钱’等划算感。")
+    elif payload.get("group_price"):
         lines.append(f"团购价：{payload.get('group_price')}")
-    if payload.get("original_price"):
+    elif payload.get("original_price"):
         lines.append(f"原价：{payload.get('original_price')}")
     if payload.get("audience"):
         lines.append(f"目标人群：{payload.get('audience')}")
