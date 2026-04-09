@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 
 from catalog import DEFAULT_MODEL, EVENT_TYPES, MAIN_CATEGORIES, get_available_tags
 from generation import CopyGenerationError, ProductFormData, generate_copy, validate_product_form
-from prompt import load_examples
 
 load_dotenv(dotenv_path=Path(__file__).with_name(".env"), override=False)
 
@@ -215,32 +214,6 @@ def reset_form_fields(hide_form=False):
     st.session_state["show_form"] = not hide_form
 
 
-def apply_example(example):
-    category_text = example.get("category", "")
-    category_parts = [part.strip() for part in category_text.split("/", 1)]
-    main_category = category_parts[0] if category_parts and category_parts[0] in MAIN_CATEGORIES else next(iter(MAIN_CATEGORIES))
-    subcategories = MAIN_CATEGORIES.get(main_category, [])
-    subcategory = category_parts[1] if len(category_parts) > 1 and category_parts[1] in subcategories else subcategories[0]
-
-    st.session_state["show_form"] = True
-    st.session_state["main_category"] = main_category
-    st.session_state["subcategory"] = subcategory
-    st.session_state["product_name"] = example.get("product_name", "")
-    st.session_state["specs"] = example.get("specs", "")
-    st.session_state["selected_tags"] = example.get("tags", [])[:5]
-    st.session_state["group_price"] = ""
-    st.session_state["original_price"] = ""
-    st.session_state["audience"] = ""
-    st.session_state["event_type"] = ""
-    st.session_state["extra_notes"] = ""
-    st.session_state["style"] = "种草风"
-    st.session_state["generated_copy"] = None
-    st.session_state["last_payload"] = None
-    st.session_state["raw_response"] = ""
-    st.session_state["generation_error"] = ""
-    sync_category_fields()
-
-
 def sync_category_fields():
     category = st.session_state.get("main_category")
     subcategories = MAIN_CATEGORIES.get(category, [])
@@ -370,23 +343,11 @@ def render_intro():
     )
     render_output_rules()
 
-    action_col, demo_col = st.columns([1.2, 1], gap="large")
-    with action_col:
-        st.markdown("**开始方式**")
-        st.caption("从空白表单开始，按商品信息逐项填写。")
-        if st.button("开始生成", type="primary", use_container_width=True, key="intro_start"):
-            st.session_state["show_form"] = True
-            st.rerun()
-
-    with demo_col:
-        st.markdown("**快速试填**")
-        st.caption("先载入一个真实示例，直接查看填写方式和生成效果。")
-        examples = load_examples()[:2]
-        for index, example in enumerate(examples):
-            label = f"试填：{example.get('product_name', '示例商品')}"
-            if st.button(label, use_container_width=True, key=f"intro_example_{index}"):
-                apply_example(example)
-                st.rerun()
+    st.markdown("**开始方式**")
+    st.caption("从空白表单开始，按商品信息逐项填写。")
+    if st.button("开始生成", type="primary", use_container_width=True, key="intro_start"):
+        st.session_state["show_form"] = True
+        st.rerun()
 
     step_cols = st.columns(3)
     steps = [
@@ -414,7 +375,7 @@ def render_page_header():
             <div class="hero-kicker">WRITE FASTER</div>
             <h1 class="hero-title" style="font-size:1.7rem;">同一页面完成填写、生成、复制和重新生成</h1>
             <p class="hero-desc" style="font-size:0.97rem; max-width:780px;">
-                表单保持单页形态，右侧会实时显示准备度和示例入口；移动端会自动按顺序堆叠。
+                表单保持单页形态，右侧会实时显示准备度和操作面板；移动端会自动按顺序堆叠。
             </p>
         </div>
         """,
@@ -423,27 +384,17 @@ def render_page_header():
 
 
 def render_top_toolbar():
-    left, middle, right = st.columns([1, 1, 1], gap="small")
+    left, right = st.columns([1, 1], gap="small")
 
     with left:
         if st.button("返回欢迎页", use_container_width=True, key="back_to_intro"):
             st.session_state["show_form"] = False
             st.rerun()
 
-    with middle:
+    with right:
         if st.button("清空表单", use_container_width=True, key="clear_form"):
             reset_form_fields()
             st.rerun()
-
-    with right:
-        examples = load_examples()
-        demo_label = "试填示例"
-        if examples:
-            demo_label = f"试填：{examples[0].get('product_name', '示例商品')}"
-        if st.button(demo_label, use_container_width=True, key="toolbar_example"):
-            if examples:
-                apply_example(examples[0])
-                st.rerun()
 
 
 def render_summary_panel():
@@ -494,22 +445,6 @@ def render_summary_panel():
             with st.spinner("正在重新生成，请稍候..."):
                 run_generation(st.session_state.get("last_payload"))
             st.rerun()
-
-
-def render_example_panel():
-    examples = load_examples()
-    if not examples:
-        return
-
-    with st.container(border=True):
-        st.markdown("**示例试填**")
-        st.caption("不想从空白开始，可以直接套一个真实商品样本。")
-        for index, example in enumerate(examples):
-            category = example.get("category", "")
-            label = f"{example.get('product_name', '示例商品')} | {category}"
-            if st.button(label, use_container_width=True, key=f"side_example_{index}"):
-                apply_example(example)
-                st.rerun()
 
 
 def render_form():
@@ -692,7 +627,7 @@ def render_results():
 def render_help():
     with st.expander("使用说明", expanded=False):
         st.write(
-            "1. 从欢迎页开始，或直接试填示例。\n"
+            "1. 从欢迎页进入表单后，按顺序填写商品信息。\n"
             "2. 按顺序填写商品基础信息、卖点标签和补充说明。\n"
             "3. 右侧操作面板会实时显示缺失项和准备度。\n"
             "4. 生成后可以按字段复制，也可以整段复制。\n"
@@ -719,7 +654,6 @@ def main():
         render_messages()
     with panel_col:
         render_summary_panel()
-        render_example_panel()
 
     render_results()
     render_help()
