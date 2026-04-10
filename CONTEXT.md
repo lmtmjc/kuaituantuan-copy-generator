@@ -21,6 +21,7 @@
 - [x] Prompt 强化为快团团资深运营专家人设与高转化语言风格
 - [x] Prompt 补充排版规范、价格划算感表达和描述结构约束
 - [x] normalize_output 支持降级处理，不再因卖点/段落/标签数量不足直接失败
+- [x] README 主标题与「爆款文案」产品定位对齐（仓库对外展示与 PRD/CONTEXT 一致）
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
