@@ -32,8 +32,8 @@ def build_prompt(payload):
         "输出必须严格为 JSON，对象键名固定为：activity_title、product_title、selling_points、detailed_description、labels。",
         "字段要求：activity_title 为 1 条；product_title 为 1 条；selling_points 必须恰好 3 条；detailed_description 为 3 到 5 段；labels 为 3 到 5 个关键词。",
         "字数要求：activity_title 30 字以内；product_title 8 到 30 字；selling_points 每条 15 字以内；detailed_description 总字数 500 字以内。",
-        "排版规范：activity_title 必须以吸睛 Emoji 开头（如🔥、💰、☕️）；",
-        "selling_points 每一条必须以 ✅、✨ 或 📍 开头；",
+        "【排版指令】核心要求：必须在文案中大量且恰当地插入微信风格 Emoji（如 🔥, ✨, 😋, 🛒），增加视觉吸引力。",
+        "【字段指令】activity_title 必须以震撼符号开头；selling_points 每一条必须以 ✅ 开头。",
         "detailed_description 段落间必须有视觉呼吸感，适当使用符号分割。",
         "商品标题优先包含品牌、品名、规格；若输入中没有品牌，不得虚构品牌。",
         "不要使用绝对化词汇，例如：最健康、纯天然、第一。",
@@ -46,6 +46,8 @@ def build_prompt(payload):
         "详细描述要有自然段落感和带货节奏，少写生硬术语和纯参数罗列，多写用户能快速感知的卖点。",
         "详细描述要遵循‘痛点/场景+解决方案+下单理由’的逻辑。",
         "例如：不要只写‘茉莉咖啡液’，要写‘下午办公犯困来一支，3秒唤醒清爽茉莉香，比点奶茶划算多了’。",
+        "【转化逻辑】如果提供价格对比，请计算具体的省钱金额并体现在 detailed_description 中，突出‘闭眼入’的性价比。",
+        f"【场景引导】结合目标人群（如：{payload.get('audience', '大家')}）的使用场景进行带货，强调‘解决什么烦恼’或‘带来什么快乐’。",
         f"本次文案风格：{payload.get('style', '种草风')}。{STYLE_HINTS.get(payload.get('style', '种草风'), '')}",
         "",
         "产品信息：",
@@ -168,6 +170,19 @@ def _trim_text(text, limit):
     return cleaned[:limit].strip()
 
 
+def _strip_leading_symbols(text):
+    return re.sub(r"^[^0-9A-Za-z\u4e00-\u9fff]+", "", _clean_text(text))
+
+
+def _with_title_emoji(text):
+    cleaned = _clean_text(text)
+    if not cleaned:
+        return ""
+    if cleaned[:1] in {"🔥", "💰", "☕"}:
+        return cleaned
+    return f"🔥 {cleaned}"
+
+
 def _trim_descriptions(items):
     cleaned_items = [_clean_text(item) for item in items if _clean_text(item)]
     if not cleaned_items:
@@ -209,16 +224,12 @@ def normalize_output(payload):
         ]
     )[:5]
 
-    if not activity_title or not product_title:
-        return None
-    if len(product_title) < 8:
-        return None
-    if len(selling_points) < 3:
-        return None
-    if len(descriptions) < 3:
-        return None
-    if len(labels) < 3:
-        return None
+    # 优先保留模型已返回的内容，缺字段时再做轻量兜底，避免因条目不足整包作废。
+    if not activity_title:
+        activity_title = _trim_text(_with_title_emoji(product_title), 30) or "🔥 爆款开团中"
+
+    if not product_title:
+        product_title = _trim_text(_strip_leading_symbols(activity_title), 30) or "商品信息待补充"
 
     return {
         "activity_title": activity_title,
