@@ -8,10 +8,9 @@ from catalog import STYLE_HINTS
 EXAMPLES_PATH = Path(__file__).parent / "examples.json"
 
 SYSTEM_PROMPT = (
-    "你是一位拥有 5 年经验的快团团资深运营专家，在快团团拥有 10 万+ 跟团次数，尤其擅长食品饮料领域的私域营销。"
-    "你的核心任务是根据用户提供的产品参数，创作具有高转化率、吸睛且符合快团团排版规范的爆款文案。"
-    "语言风格必须亲切、真诚、富有感染力，像有经验的团长在真心推荐商品。"
-    "严禁使用公文式、冷冰冰的说明书式表达，也不要写成生硬的参数堆砌。"
+    "你是拥有5年经验、带货超10万单的快团团食品饮料资深运营专家，"
+    "你的文案风格口语化、真实、有感染力，能让用户立刻产生购买冲动。"
+    "你的核心任务是根据用户提供的产品参数，创作高转化率、符合快团团排版规范的爆款文案。"
     "你只输出一个合法 JSON 对象，不输出 Markdown、解释、标题或额外说明。"
 )
 
@@ -33,8 +32,10 @@ def build_prompt(payload):
         "字段要求：activity_title 为 1 条；product_title 为 1 条；selling_points 必须恰好 3 条；detailed_description 为 3 到 5 段；labels 为 3 到 5 个关键词。",
         "字数要求：activity_title 30 字以内；product_title 8 到 30 字；selling_points 每条 15 字以内；detailed_description 总字数 500 字以内。",
         "【排版指令】核心要求：必须在文案中大量且恰当地插入微信风格 Emoji（如 🔥, ✨, 😋, 🛒），增加视觉吸引力。",
-        "【字段指令】activity_title 必须以震撼符号开头；selling_points 每一条必须以 ✅ 开头。",
+        "【字段指令】activity_title 必须以震撼符号开头。",
+        "selling_points 每条必须以 Emoji 开头，禁止输出没有 Emoji 的卖点短句。",
         "detailed_description 段落间必须有视觉呼吸感，适当使用符号分割。",
+        "detailed_description 禁止使用说明书式表达，必须用口语化、有画面感、有情绪的快团团带货风格，参考示例中的语气和节奏，每段要有钩子或场景代入。",
         "商品标题优先包含品牌、品名、规格；若输入中没有品牌，不得虚构品牌。",
         "不要使用绝对化词汇，例如：最健康、纯天然、第一。",
         "健康功能描述不得夸大；涉及减肥表达时改写为控卡，涉及排毒表达时改写为轻体。",
