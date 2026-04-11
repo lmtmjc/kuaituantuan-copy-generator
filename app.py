@@ -46,6 +46,9 @@ def copy_button(text, label, uid):
 def inject_styles():
     st.markdown(
         """
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
         :root {
             --ink: #1f2937;
@@ -57,13 +60,15 @@ def inject_styles():
             --brand-deep: #0f172a;
             --accent: #f59e0b;
             --success: #0f766e;
+            --page-bg: #f9f9fb;
+            --hero-ink: #1d1d1f;
+            --hero-muted: #6e6e73;
         }
 
         .stApp {
-            background:
-                radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 34%),
-                radial-gradient(circle at top right, rgba(245, 158, 11, 0.10), transparent 28%),
-                linear-gradient(180deg, #fffdf8 0%, #f8fafc 45%, #ffffff 100%);
+            background: var(--page-bg);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+                "Microsoft YaHei", sans-serif;
         }
 
         .main .block-container {
@@ -72,41 +77,68 @@ def inject_styles():
             padding-bottom: 4rem;
         }
 
-        .hero-card {
-            border-radius: 28px;
-            padding: 1.8rem 1.8rem 1.9rem;
-            background:
-                radial-gradient(circle at 80% 15%, rgba(255,255,255,0.22), transparent 18%),
-                linear-gradient(135deg, #0f172a 0%, #1d4ed8 56%, #f59e0b 140%);
-            color: #ffffff;
-            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.18);
+        /* 极简顶栏：无渐变色块，左对齐留白 */
+        .hero-minimal {
+            text-align: left;
+            padding: 0.25rem 0 1.75rem;
+            margin: 0 0 1.25rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+                "Microsoft YaHei", sans-serif;
+        }
+
+        .hero-minimal--compact {
+            padding-bottom: 1.35rem;
             margin-bottom: 1rem;
         }
 
         .hero-kicker {
-            display: inline-flex;
-            font-size: 0.78rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            padding: 0.35rem 0.7rem;
-            border-radius: 999px;
-            background: rgba(255,255,255,0.14);
-            margin-bottom: 0.9rem;
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            color: var(--hero-muted);
+            margin: 0 0 0.85rem 0;
+            text-transform: none;
+            padding: 0;
+            background: none;
         }
 
         .hero-title {
-            font-size: 2.2rem;
-            line-height: 1.08;
-            font-weight: 800;
-            margin: 0 0 0.7rem 0;
+            font-size: clamp(1.65rem, 2.8vw, 2.15rem);
+            line-height: 1.15;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            color: var(--hero-ink);
+            margin: 0 0 0.85rem 0;
+            max-width: 22em;
+        }
+
+        .hero-minimal--compact .hero-title {
+            font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+            max-width: 28em;
         }
 
         .hero-desc {
-            max-width: 700px;
-            color: rgba(255,255,255,0.9);
-            line-height: 1.7;
-            font-size: 1rem;
-            margin-bottom: 0;
+            max-width: 36em;
+            color: var(--hero-muted);
+            line-height: 1.65;
+            font-size: 0.98rem;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            margin: 0;
+        }
+
+        /* 兼容旧类名：与 hero-minimal 视觉一致（若仍有引用） */
+        .hero-card {
+            border-radius: 0;
+            padding: 0.25rem 0 1.75rem;
+            margin-bottom: 1.25rem;
+            background: transparent;
+            color: inherit;
+            box-shadow: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+            text-align: left;
         }
 
         .mini-grid {
@@ -117,11 +149,11 @@ def inject_styles():
         }
 
         .mini-card {
-            background: rgba(255,255,255,0.8);
-            border: 1px solid rgba(255,255,255,0.55);
-            border-radius: 20px;
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            border-radius: 16px;
             padding: 0.95rem 1rem;
-            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
         }
 
         .mini-card strong {
@@ -331,11 +363,11 @@ def run_generation(data=None):
 def render_intro():
     st.markdown(
         """
-        <div class="hero-card">
-            <div class="hero-kicker">KUAITUANTUAN COPY STUDIO</div>
-            <h1 class="hero-title">把商品信息填进去，直接拿到能开团的成品文案</h1>
+        <div class="hero-minimal">
+            <div class="hero-kicker">快团团专供</div>
+            <h1 class="hero-title">让每一件好物，都有爆款文案。</h1>
             <p class="hero-desc">
-                面向快团团团长与食品饮料经销商，保留结构化表单输入，重点解决“不会喂 AI”和“生成后还得重改”这两个问题。
+                专注开团场景，把好物的价值说清楚，让团员一眼心动。
             </p>
         </div>
         """,
@@ -371,11 +403,11 @@ def render_intro():
 def render_page_header():
     st.markdown(
         """
-        <div class="hero-card" style="padding:1.35rem 1.45rem 1.4rem; margin-bottom:1rem;">
-            <div class="hero-kicker">WRITE FASTER</div>
-            <h1 class="hero-title" style="font-size:1.7rem;">同一页面完成填写、生成、复制和重新生成</h1>
-            <p class="hero-desc" style="font-size:0.97rem; max-width:780px;">
-                表单保持单页形态，右侧会实时显示准备度和操作面板；移动端会自动按顺序堆叠。
+        <div class="hero-minimal hero-minimal--compact">
+            <div class="hero-kicker">快团团专供</div>
+            <h1 class="hero-title">文案工作台</h1>
+            <p class="hero-desc">
+                下方填写商品信息，生成结果可逐项复制到开团页。
             </p>
         </div>
         """,

@@ -24,6 +24,7 @@
 - [x] normalize_output 支持降级处理，不再因卖点/段落/标签数量不足直接失败
 - [x] README 主标题与「爆款文案」产品定位对齐（仓库对外展示与 PRD/CONTEXT 一致）
 - [x] 生成中 Spinner 提示统一为「正在生成，请稍候...」（无「最多20秒」等附加说明）
+- [x] 首页 / 顶栏 UI：浅色全站底、左对齐极简 Header、升级 Slogan 与「快团团专供」副文案
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
@@ -37,7 +38,7 @@
 - 当前分支：`main`
 - 已配置远程：`origin -> https://github.com/lmtmjc/kuaituantuan-copy-generator.git`
 - 当前已建立 `main` 跟踪 `origin/main`
-- 最近文档同步：2026-04-12（`CONTEXT.md` / `CHANGELOG.md` 与仓库当前实现及交互文案对齐；含生成中 Spinner 统一；工作区与 `origin/main` 一致时可视为进度清单有效）
+- 最近文档同步：2026-04-12（`CONTEXT.md` / `CHANGELOG.md` 与仓库当前实现对齐；含首页顶栏极简 UI、Slogan 与生成中 Spinner 等；工作区与 `origin/main` 一致时可视为进度清单有效）
 
 ## 关键文件说明
 - `app.py` 主程序入口
