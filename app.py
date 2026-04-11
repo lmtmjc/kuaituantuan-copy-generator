@@ -46,9 +46,6 @@ def copy_button(text, label, uid):
 def inject_styles():
     st.markdown(
         """
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <style>
         :root {
             --ink: #1f2937;
@@ -60,15 +57,27 @@ def inject_styles():
             --brand-deep: #0f172a;
             --accent: #f59e0b;
             --success: #0f766e;
-            --page-bg: #f9f9fb;
-            --hero-ink: #1d1d1f;
+            --page-bg: #ffffff;
+            --text-primary: #1a1a1a;
             --hero-muted: #6e6e73;
         }
 
         .stApp {
             background: var(--page-bg);
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
                 "Microsoft YaHei", sans-serif;
+        }
+
+        /* 去掉 Streamlit 默认标题/装饰性渐变与偏色 */
+        .main h1, .main h2, .main h3,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3 {
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: currentColor !important;
+            color: var(--text-primary) !important;
+            font-weight: 700;
         }
 
         .main .block-container {
@@ -77,14 +86,24 @@ def inject_styles():
             padding-bottom: 4rem;
         }
 
-        /* 极简顶栏：无渐变色块，左对齐留白 */
+        [data-testid="stSidebar"] {
+            background: var(--page-bg);
+        }
+
+        /* 极简顶栏：左对齐 */
         .hero-minimal {
             text-align: left;
             padding: 0.25rem 0 1.75rem;
             margin: 0 0 1.25rem;
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
                 "Microsoft YaHei", sans-serif;
+        }
+
+        .intro-hero.hero-minimal {
+            border-bottom: none;
+            margin-bottom: 0.5rem;
+            padding-bottom: 0.5rem;
         }
 
         .hero-minimal--compact {
@@ -94,12 +113,12 @@ def inject_styles():
 
         .hero-kicker {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: 600;
-            letter-spacing: 0.14em;
-            color: var(--hero-muted);
+            letter-spacing: 0.2em;
+            color: #888888;
             margin: 0 0 0.85rem 0;
-            text-transform: none;
+            text-transform: uppercase;
             padding: 0;
             background: none;
         }
@@ -107,15 +126,30 @@ def inject_styles():
         .hero-title {
             font-size: clamp(1.65rem, 2.8vw, 2.15rem);
             line-height: 1.15;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-            color: var(--hero-ink);
+            font-weight: 800;
+            letter-spacing: 0.02em;
+            color: var(--text-primary);
             margin: 0 0 0.85rem 0;
             max-width: 22em;
         }
 
+        .intro-hero .hero-title {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-top: 1rem;
+            max-width: 18em;
+        }
+
+        @media (max-width: 640px) {
+            .intro-hero .hero-title {
+                font-size: 2rem;
+            }
+        }
+
         .hero-minimal--compact .hero-title {
             font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+            font-weight: 700;
+            margin-top: 0.35rem;
             max-width: 28em;
         }
 
@@ -129,7 +163,6 @@ def inject_styles():
             margin: 0;
         }
 
-        /* 兼容旧类名：与 hero-minimal 视觉一致（若仍有引用） */
         .hero-card {
             border-radius: 0;
             padding: 0.25rem 0 1.75rem;
@@ -139,6 +172,43 @@ def inject_styles():
             box-shadow: none;
             border-bottom: 1px solid rgba(0, 0, 0, 0.06);
             text-align: left;
+        }
+
+        /* 首页输出规格：四列参数网格 */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 0 0 1.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .spec-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 520px) {
+            .spec-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .spec-grid .mini-card {
+            border: 1px solid #efefef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            background: #fafafa;
+            box-shadow: none;
+        }
+
+        .spec-grid .mini-card strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .spec-grid .mini-card span {
+            color: #666666;
         }
 
         .mini-grid {
@@ -158,7 +228,7 @@ def inject_styles():
 
         .mini-card strong {
             display: block;
-            color: var(--brand-deep);
+            color: var(--text-primary);
             font-size: 1.15rem;
             margin-bottom: 0.18rem;
         }
@@ -166,6 +236,87 @@ def inject_styles():
         .mini-card span {
             color: var(--muted);
             font-size: 0.92rem;
+        }
+
+        /* 首页 CTA：黑底药丸（原生 a，避免 Streamlit 块级 DOM 错位） */
+        .intro-cta-wrap {
+            display: flex;
+            justify-content: center;
+            margin: 2rem auto;
+        }
+
+        .intro-cta-wrap .intro-cta-link {
+            display: inline-block;
+            width: auto;
+            background: #000000;
+            color: #ffffff;
+            padding: 12px 48px;
+            border-radius: 99px;
+            font-weight: 600;
+            border: none;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .intro-cta-wrap .intro-cta-link:hover {
+            background: #333333;
+            color: #ffffff;
+        }
+
+        /* details 折叠说明 */
+        .intro-details {
+            margin-top: 0.5rem;
+            border: 1px solid #efefef;
+            border-radius: 12px;
+            padding: 0.25rem 1rem 0.75rem;
+            background: #fafafa;
+        }
+
+        .intro-details summary {
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #555;
+            padding: 0.65rem 0;
+            list-style: none;
+        }
+
+        .intro-details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .intro-details .intro-details-body {
+            color: #555;
+            font-size: 0.92rem;
+            line-height: 1.65;
+            padding-bottom: 0.5rem;
+        }
+
+        .intro-details .intro-details-body p {
+            margin: 0 0 0.75rem;
+        }
+
+        .intro-details .step-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+            margin: 0.75rem 0 1rem;
+        }
+
+        @media (max-width: 720px) {
+            .intro-details .step-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .intro-details .step-grid .mini-card {
+            border: 1px solid #efefef;
+            border-radius: 12px;
+            padding: 1rem;
+            background: #ffffff;
         }
 
         .section-note {
@@ -315,11 +466,11 @@ def render_tag_pills(tags, empty_text="尚未选择"):
 def render_output_rules():
     st.markdown(
         """
-        <div class="mini-grid">
+        <div class="spec-grid">
             <div class="mini-card"><strong>30 字内</strong><span>活动标题</span></div>
-            <div class="mini-card"><strong>8-30 字</strong><span>商品标题</span></div>
+            <div class="mini-card"><strong>8–30 字</strong><span>商品标题</span></div>
             <div class="mini-card"><strong>3 条短句</strong><span>每条 15 字内</span></div>
-            <div class="mini-card"><strong>3-5 段</strong><span>详细描述总计 500 字内</span></div>
+            <div class="mini-card"><strong>3–5 段</strong><span>详细描述总计 500 字内</span></div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -363,41 +514,50 @@ def run_generation(data=None):
 def render_intro():
     st.markdown(
         """
-        <div class="hero-minimal">
+        <div class="hero-minimal intro-hero">
             <div class="hero-kicker">快团团专供</div>
             <h1 class="hero-title">让每一件好物，都有爆款文案。</h1>
-            <p class="hero-desc">
-                专注开团场景，把好物的价值说清楚，让团员一眼心动。
-            </p>
         </div>
         """,
         unsafe_allow_html=True,
     )
     render_output_rules()
 
-    st.markdown("**开始方式**")
-    st.caption("从空白表单开始，按商品信息逐项填写。")
-    if st.button("开始生成", type="primary", use_container_width=True, key="intro_start"):
-        st.session_state["show_form"] = True
-        st.rerun()
+    st.markdown(
+        """
+        <div class="intro-cta-wrap">
+            <a class="intro-cta-link" href="?start=1">开始生成</a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    step_cols = st.columns(3)
-    steps = [
-        ("1", "填商品信息", "商品名、品类、规格、卖点标签"),
-        ("2", "选表达风格", "种草风、促销风、节日风"),
-        ("3", "复制去开团", "逐项复制或一键复制全部"),
-    ]
-    for col, (num, title, desc) in zip(step_cols, steps):
-        with col:
-            st.markdown(
-                f"""
-                <div class="mini-card">
-                    <strong>{num}. {title}</strong>
-                    <span>{desc}</span>
+    st.markdown(
+        """
+        <details class="intro-details">
+            <summary>使用说明与更多介绍</summary>
+            <div class="intro-details-body">
+                <p class="hero-desc" style="margin:0 0 1rem;color:#555;">
+                    专注开团场景，把好物的价值说清楚，让团员一眼心动。
+                </p>
+                <p style="margin:0 0 0.75rem;"><strong>开始方式</strong>：从空白表单逐项填写商品信息即可。</p>
+                <div class="step-grid">
+                    <div class="mini-card"><strong>1. 填商品信息</strong><span>商品名、品类、规格、卖点标签</span></div>
+                    <div class="mini-card"><strong>2. 选表达风格</strong><span>种草风、促销风、节日风</span></div>
+                    <div class="mini-card"><strong>3. 复制去开团</strong><span>逐项复制或一键复制全部</span></div>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+                <p style="margin:0.5rem 0 0.35rem;font-weight:600;color:#1a1a1a;">使用说明</p>
+                <ol style="margin:0;padding-left:1.2rem;color:#555;">
+                    <li>进入表单后，按顺序填写商品基础信息、卖点标签与补充说明。</li>
+                    <li>右侧操作面板会显示缺失项与准备度。</li>
+                    <li>生成后可按字段复制，也可整段复制到开团页。</li>
+                    <li>修改表单后建议重新生成，避免沿用旧结果。</li>
+                </ol>
+            </div>
+        </details>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def render_page_header():
@@ -672,9 +832,14 @@ def main():
     inject_styles()
     initialize_state()
 
+    if st.query_params.get("start") == "1":
+        st.session_state["show_form"] = True
+        if "start" in st.query_params:
+            del st.query_params["start"]
+        st.rerun()
+
     if not st.session_state["show_form"]:
         render_intro()
-        render_help()
         return
 
     render_page_header()
