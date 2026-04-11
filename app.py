@@ -366,7 +366,7 @@ def inject_styles():
 def initialize_state():
     first_category = next(iter(MAIN_CATEGORIES))
     defaults = {
-        "show_form": False,
+        "started": False,
         "main_category": first_category,
         "subcategory": MAIN_CATEGORIES[first_category][0],
         "generated_copy": None,
@@ -394,7 +394,7 @@ def reset_form_fields(hide_form=False):
     st.session_state["last_payload"] = None
     st.session_state["raw_response"] = ""
     st.session_state["generation_error"] = ""
-    st.session_state["show_form"] = not hide_form
+    st.session_state["started"] = not hide_form
 
 
 def sync_category_fields():
@@ -523,14 +523,11 @@ def render_intro():
     )
     render_output_rules()
 
-    st.markdown(
-        """
-        <div class="intro-cta-wrap">
-            <a class="intro-cta-link" href="?start=1">开始生成</a>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    _, intro_cta, _ = st.columns([1, 2, 1])
+    with intro_cta:
+        if st.button("开始生成", key="intro_start", use_container_width=True):
+            st.session_state["started"] = True
+            st.rerun()
 
     st.markdown(
         """
@@ -580,7 +577,7 @@ def render_top_toolbar():
 
     with left:
         if st.button("返回欢迎页", use_container_width=True, key="back_to_intro"):
-            st.session_state["show_form"] = False
+            st.session_state["started"] = False
             st.rerun()
 
     with right:
@@ -832,13 +829,8 @@ def main():
     inject_styles()
     initialize_state()
 
-    if st.query_params.get("start") == "1":
-        st.session_state["show_form"] = True
-        if "start" in st.query_params:
-            del st.query_params["start"]
-        st.rerun()
-
-    if not st.session_state["show_form"]:
+    # 仅用 session_state 切换首页 / 表单，避免 ?query 导航与重跑叠加导致重复渲染
+    if not st.session_state.get("started"):
         render_intro()
         return
 

@@ -25,7 +25,8 @@
 - [x] README 主标题与「爆款文案」产品定位对齐（仓库对外展示与 PRD/CONTEXT 一致）
 - [x] 生成中 Spinner 提示统一为「正在生成，请稍候...」（无「最多20秒」等附加说明）
 - [x] 首页 / 顶栏 UI：浅色全站底、左对齐极简 Header、升级 Slogan 与「快团团专供」副文案
-- [x] 首页纯白极简：四列规格网格、黑底 CTA、`details` 折叠说明；欢迎页不再单独展示侧栏使用说明
+- [x] 首页纯白极简：四列规格网格、居中「开始生成」按钮、`details` 折叠说明；欢迎页不再单独展示侧栏使用说明
+- [x] 首页 / 表单切换使用 `session_state["started"]` + `st.button`，不使用 `?start=1`，避免双页重复渲染
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
