@@ -36,6 +36,7 @@
 - 当前分支：`main`
 - 已配置远程：`origin -> https://github.com/lmtmjc/kuaituantuan-copy-generator.git`
 - 当前已建立 `main` 跟踪 `origin/main`
+- 最近文档同步：2026-04-11（`CONTEXT.md` / `CHANGELOG.md` 与仓库当前实现及 `README.md` 表述对齐；工作区与 `origin/main` 一致时可视为进度清单有效）
 
 ## 关键文件说明
 - `app.py` 主程序入口
