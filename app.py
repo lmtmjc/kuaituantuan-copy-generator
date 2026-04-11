@@ -432,7 +432,7 @@ def render_summary_panel():
             disabled=not is_generation_ready(),
             key="generate_from_panel",
         ):
-            with st.spinner("正在生成，请稍候... 最多20秒"):
+            with st.spinner("正在生成，请稍候..."):
                 run_generation()
             st.rerun()
 
@@ -442,7 +442,7 @@ def render_summary_panel():
             disabled=st.session_state.get("last_payload") is None,
             key="regenerate_from_panel",
         ):
-            with st.spinner("正在重新生成，请稍候..."):
+            with st.spinner("正在生成，请稍候..."):
                 run_generation(st.session_state.get("last_payload"))
             st.rerun()
 
@@ -551,7 +551,7 @@ def render_results():
             copy_button(combined_text, "一键复制全部", "copy_all_preview")
         with action_right:
             if st.button("基于当前输入重新生成", use_container_width=True, key="regenerate_from_result"):
-                with st.spinner("正在重新生成，请稍候..."):
+                with st.spinner("正在生成，请稍候..."):
                     run_generation(build_form_data())
                 st.rerun()
 
