@@ -515,7 +515,6 @@ def render_intro():
     st.markdown(
         """
         <div class="hero-minimal intro-hero">
-            <div class="hero-kicker">快团团专供</div>
             <h1 class="hero-title">让每一件好物，都有爆款文案。</h1>
         </div>
         """,
@@ -561,7 +560,6 @@ def render_page_header():
     st.markdown(
         """
         <div class="hero-minimal hero-minimal--compact">
-            <div class="hero-kicker">快团团专供</div>
             <h1 class="hero-title">文案工作台</h1>
             <p class="hero-desc">
                 下方填写商品信息，生成结果可逐项复制到开团页。

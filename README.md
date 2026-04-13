@@ -43,38 +43,38 @@
 
 1. 克隆仓库：
 
-  ```sh
+```sh
     git clone https://github.com/lmtmjc/kuaituantuan-copy-generator.git
     cd kuaituantuan-copy-generator
-    ```
+```
 
 2. 推荐创建虚拟环境：
 
-    ```sh
+```sh
     python3 -m venv venv
     source venv/bin/activate  # Windows: venv\Scripts\activate
-    ```
+```
 
 3. 安装依赖：
 
-    ```sh
+```sh
     python3 -m pip install -r requirements.txt
-    ```
+```
 
 4. 配置API Key：
 
-     ```sh
+ ```sh
     cp .env.example .env
     # 编辑 .env，填入 DEEPSEEK_API_KEY=your_key_here
-    ```
+```
 
 ## 运行
 
 1. 启动应用：
 
-    ```sh
+```sh
     python3 -m streamlit run app.py
-    ```
+```
 
 2. 打开浏览器访问 `http://localhost:8501`。
 3. 点击“开始生成”进入表单。
