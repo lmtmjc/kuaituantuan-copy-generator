@@ -19,6 +19,8 @@ class ProductFormData:
     event_type: str = ""
     extra_notes: str = ""
     style: str = "种草风"
+    generation_nonce: str = ""
+    previous_output: str = ""
 
     def cleaned(self):
         return ProductFormData(
@@ -33,6 +35,8 @@ class ProductFormData:
             event_type=self.event_type.strip(),
             extra_notes=self.extra_notes.strip(),
             style=self.style.strip() or "种草风",
+            generation_nonce=self.generation_nonce.strip(),
+            previous_output=self.previous_output.strip(),
         )
 
     def to_prompt_payload(self):

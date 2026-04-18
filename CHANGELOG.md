@@ -1,5 +1,13 @@
 # 更新日志 CHANGELOG
 
+## 2026-04-18
+- `app.py`：修复侧栏“重新生成一版”错误复用 `last_payload` 的问题，改为始终读取当前表单输入；用户修改商品信息后再点重新生成，不会继续拿旧输入出文案
+- `app.py`：新增 `generation_version` 与结果区动态 widget key，避免 `st.text_area` 因固定 key 持续保留旧值，导致界面看起来始终是上一版文案
+- `app.py`：`run_generation()` 新增重生成上下文，重生成时会附带上一版文案并注入新的请求标识，确保相同输入下也发起一轮新的模型生成
+- `generation.py` / `prompt.py`：为 `ProductFormData` 增加 `generation_nonce` 与 `previous_output` 字段；Prompt 在“重新生成”场景下明确要求模型避开上一版高重复措辞
+- `CONTEXT.md`：补充本次 bug 排查与刷新机制修复进度
+- `CHANGELOG.md`：记录本条修订
+
 ## 2026-04-12
 - `app.py`：移除欢迎页与内页顶栏中的「快团团专供」字样，其余布局与文案保持不变
 - `app.py`：首页与表单切换改为仅用 `session_state["started"]` 与 `st.button("开始生成")`，移除 `?start=1` 链接导航，避免与 Streamlit 重跑叠加导致双页/重复内容；`main()` 中未开始时仅 `render_intro()` 并 `return`

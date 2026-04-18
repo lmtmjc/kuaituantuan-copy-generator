@@ -1,5 +1,6 @@
 import json
 import os
+import time
 from pathlib import Path
 
 import streamlit as st
@@ -21,6 +22,15 @@ FORM_DEFAULTS = {
     "extra_notes": "",
     "style": "种草风",
 }
+
+RESULT_FIELD_KEYS = [
+    "result_combined",
+    "result_activity_title",
+    "result_product_title",
+    "result_labels",
+    "result_selling_points",
+    "result_detailed_description",
+]
 
 
 def copy_button(text, label, uid):
@@ -373,6 +383,7 @@ def initialize_state():
         "last_payload": None,
         "raw_response": "",
         "generation_error": "",
+        "generation_version": 0,
     }
     defaults.update(FORM_DEFAULTS)
 
@@ -394,6 +405,7 @@ def reset_form_fields(hide_form=False):
     st.session_state["last_payload"] = None
     st.session_state["raw_response"] = ""
     st.session_state["generation_error"] = ""
+    st.session_state["generation_version"] = 0
     st.session_state["started"] = not hide_form
 
 
@@ -421,6 +433,38 @@ def build_form_data():
         event_type=st.session_state.get("event_type", ""),
         extra_notes=st.session_state.get("extra_notes", ""),
         style=st.session_state.get("style", "种草风"),
+    )
+
+
+def clear_result_widget_state():
+    for prefix in RESULT_FIELD_KEYS:
+        for key in list(st.session_state.keys()):
+            if key.startswith(prefix):
+                del st.session_state[key]
+
+
+def with_generation_context(payload, is_regeneration=False):
+    cleaned = payload.cleaned()
+    previous_output = ""
+    if is_regeneration:
+        current_output = st.session_state.get("generated_copy")
+        if current_output is not None:
+            previous_output = current_output.combined_text()
+
+    return ProductFormData(
+        product_name=cleaned.product_name,
+        main_category=cleaned.main_category,
+        subcategory=cleaned.subcategory,
+        specs=cleaned.specs,
+        tags=list(cleaned.tags),
+        group_price=cleaned.group_price,
+        original_price=cleaned.original_price,
+        audience=cleaned.audience,
+        event_type=cleaned.event_type,
+        extra_notes=cleaned.extra_notes,
+        style=cleaned.style,
+        generation_nonce=str(time.time_ns()),
+        previous_output=previous_output,
     )
 
 
@@ -477,8 +521,9 @@ def render_output_rules():
     )
 
 
-def run_generation(data=None):
-    payload = data or build_form_data()
+def run_generation(data=None, is_regeneration=False):
+    source_payload = data or build_form_data()
+    payload = with_generation_context(source_payload, is_regeneration=is_regeneration)
     st.session_state["generation_error"] = ""
     st.session_state["raw_response"] = ""
     errors = validate_product_form(payload)
@@ -506,9 +551,11 @@ def run_generation(data=None):
         return
 
     st.session_state["generated_copy"] = generated_copy
-    st.session_state["last_payload"] = payload.cleaned()
+    st.session_state["last_payload"] = source_payload.cleaned()
     st.session_state["raw_response"] = raw_response
     st.session_state["generation_error"] = ""
+    st.session_state["generation_version"] = st.session_state.get("generation_version", 0) + 1
+    clear_result_widget_state()
 
 
 def render_intro():
@@ -630,7 +677,7 @@ def render_summary_panel():
             key="regenerate_from_panel",
         ):
             with st.spinner("正在生成，请稍候..."):
-                run_generation(st.session_state.get("last_payload"))
+                run_generation(build_form_data(), is_regeneration=True)
             st.rerun()
 
 
@@ -715,6 +762,7 @@ def render_results():
     description_text = "\n\n".join(generated_copy.detailed_description)
     selling_points_text = "\n".join(generated_copy.selling_points)
     labels_text = "；".join(generated_copy.labels)
+    version = st.session_state.get("generation_version", 0)
 
     st.markdown("## 生成结果")
     st.success("文案生成完成，可以直接复制，也可以继续修改表单后重新生成。")
@@ -739,13 +787,13 @@ def render_results():
         with action_right:
             if st.button("基于当前输入重新生成", use_container_width=True, key="regenerate_from_result"):
                 with st.spinner("正在生成，请稍候..."):
-                    run_generation(build_form_data())
+                    run_generation(build_form_data(), is_regeneration=True)
                 st.rerun()
 
         render_result_field(
             "完整开团文案",
             combined_text,
-            "result_combined",
+            f"result_combined_{version}",
             "copy_all_bundle",
             "复制整段成品",
             420,
@@ -759,7 +807,7 @@ def render_results():
             render_result_field(
                 "活动标题",
                 generated_copy.activity_title,
-                "result_activity_title",
+                f"result_activity_title_{version}",
                 "activity",
                 "复制活动标题",
                 84,
@@ -768,7 +816,7 @@ def render_results():
             render_result_field(
                 "商品标题",
                 generated_copy.product_title,
-                "result_product_title",
+                f"result_product_title_{version}",
                 "product",
                 "复制商品标题",
                 84,
@@ -777,7 +825,7 @@ def render_results():
             render_result_field(
                 "卖点标签",
                 labels_text,
-                "result_labels",
+                f"result_labels_{version}",
                 "labels",
                 "复制卖点标签",
                 100,
@@ -788,7 +836,7 @@ def render_results():
             render_result_field(
                 "卖点短句",
                 selling_points_text,
-                "result_selling_points",
+                f"result_selling_points_{version}",
                 "selling_points",
                 "复制卖点短句",
                 150,
@@ -797,7 +845,7 @@ def render_results():
             render_result_field(
                 "卖点详细描述",
                 description_text,
-                "result_detailed_description",
+                f"result_detailed_description_{version}",
                 "detailed_description",
                 "复制详细描述",
                 280,

@@ -73,6 +73,11 @@ def build_prompt(payload):
         lines.append(f"活动类型：{payload.get('event_type')}")
     if payload.get("extra_notes"):
         lines.append(f"补充说明：{payload.get('extra_notes')}")
+    if payload.get("generation_nonce"):
+        lines.append(f"本次生成请求标识：{payload.get('generation_nonce')}")
+    if payload.get("previous_output"):
+        lines.append("这是一次重新生成。请保持商品事实一致，但明显更换标题措辞、卖点切入角度和段落表达，避免与上一版重复。")
+        lines.append(f"上一版文案参考（禁止高重复改写）：{payload.get('previous_output')}")
 
     examples = load_examples()
     if examples:

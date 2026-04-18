@@ -27,6 +27,7 @@
 - [x] 首页 / 顶栏 UI：浅色全站底、左对齐极简 Header、升级 Slogan 与简洁副文案
 - [x] 首页纯白极简：四列规格网格、居中「开始生成」按钮、`details` 折叠说明；欢迎页不再单独展示侧栏使用说明
 - [x] 首页 / 表单切换使用 `session_state["started"]` + `st.button`，不使用 `?start=1`，避免双页重复渲染
+- [x] 修复重新生成复用旧输入与结果区旧值残留问题：侧栏重生成改为读取当前表单；结果 `text_area` 改为按生成版本刷新；同输入重生成附带 nonce 与上一版约束，确保重新请求模型
 
 ## 技术栈
 - 后端：Python + Streamlit（基于WriteWizard AI开源项目改造）
@@ -40,7 +41,7 @@
 - 当前分支：`main`
 - 已配置远程：`origin -> https://github.com/lmtmjc/kuaituantuan-copy-generator.git`
 - 当前已建立 `main` 跟踪 `origin/main`
-- 最近文档同步：2026-04-12（`CONTEXT.md` / `CHANGELOG.md` 与仓库当前实现对齐；含首页顶栏极简 UI、Slogan 与生成中 Spinner 等；工作区与 `origin/main` 一致时可视为进度清单有效）
+- 最近文档同步：2026-04-18（`CONTEXT.md` / `CHANGELOG.md` 已补充本次“重新生成不刷新” bug 修复，含当前输入重读、结果组件刷新与重新生成请求标识机制）
 
 ## 关键文件说明
 - `app.py` 主程序入口
